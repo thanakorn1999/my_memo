@@ -3,7 +3,7 @@
 
 python -m venv /path/to/new/virtual/environment
 
-env_code_memo\Scripts\activate.bat
+env\Scripts\activate.bat
 
 -Mac
 source env_code_memo/bin/activate
