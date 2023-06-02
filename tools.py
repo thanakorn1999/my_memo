@@ -9,6 +9,17 @@ if platform =='win32':
     import win32api
     win32api.LoadKeyboardLayout('00000409',1) # to switch to english
 import time
+
+if platform =='win32':
+    cm_paste ="ctrl+v"
+    cm_del ="\b"
+elif platform =='darwin':
+    cm_paste ="command+v"
+    cm_del ="delete"
+
+default_history='0123456'
+history =default_history
+
 def back_space(action):
     global history, cm_del
     if action :
@@ -29,7 +40,6 @@ def write(replacement,command):
     time.sleep(0.2)
     pyperclip.copy(save_old_copy)
 
-
 def chang_command_mac(command_list):
     new_command_list =[]
     for command in command_list:
@@ -40,8 +50,6 @@ def chang_command_mac(command_list):
             text = re.sub('@', '2', text)
         if '#' in text:
             text = re.sub('#', '3', text)
-        # if '$' in text:
-        #     text = re.sub('$', '4', text)
         if '%' in text:
             text = re.sub('%', '5', text)
         if '_' in text:
@@ -55,8 +63,6 @@ def load_data_excel(platform):
     load_dotenv()
     list_memo = os.getenv('LIST_MEMO').split(',')
     print('list_memo',list_memo)
-    print('list_memo',type(list_memo))
-    # list_memo = ['react', 'node']
     
     data = pd.concat([pd.read_excel('./memo/memo.xlsx', sheet_name = sheet) for sheet in list_memo], ignore_index = True)
 
@@ -79,16 +85,13 @@ def load_data_excel(platform):
     if platform == 'darwin':
         command_list = chang_command_mac(command_list)
 
+ 
     return command_list, message_json
-
-
-
 
 def check_map_command(history):
     global command_list,message_json
     is_match = False
     for index,command in enumerate(command_list) :
-        print(command)
         if command in history :
             write(message_json[index],command_list[index])
             is_match = True
@@ -96,37 +99,29 @@ def check_map_command(history):
     
     if not is_match:
         back_space(True)
+        print('not match')
+        for command in command_list:
+            print(command)
 
 def released(release):
-    global cm_del,history
+    global cm_del ,history
 
     if(len(release))==1:
         history=history[1:]+release
         print(history)
     elif release=='right shift':
         check_map_command(history)
-    # elif release=='backspace':delete
     elif release=='delete':
         back_space(False)
     else :
         print(release)
 
-
-
-def main(history):
-    keyboard.on_release(lambda e: released( e.name )) # old logic keyboard.add_abbreviation('@@', 'my.long.email@example.com')
+def main():
+    keyboard.on_release(lambda e: released( e.name ))
     keyboard.wait()
 
 
-if platform =='win32':
-    cm_paste ="ctrl+v"
-    cm_del ="\b"
-elif platform =='darwin':
-    cm_paste ="command+v"
-    cm_del ="delete"
 
 command_list ,message_json= load_data_excel(platform)
-default_history='0123456'
-history =default_history
 
-main(history)
+main()
