@@ -1,7 +1,5 @@
-
-# from email.headerregistry import AddressHeader
-# from ssl import ALERT_DESCRIPTION_ACCESS_DENIED
-# from urllib.request import AbstractDigestAuthHandler
+import os
+from dotenv import load_dotenv
 import pyperclip
 import keyboard
 import pandas as pd
@@ -55,10 +53,11 @@ def chang_command_mac(command_list):
     return new_command_list
 
 def load_data_excel(platform):
-    # data = pd.read_excel('./memo/memo.xlsx')
-    sheets = ['react', 'node']
+    load_dotenv()
+    list_memo = os.getenv('LIST_MEMO')
+    list_memo = ['react', 'node']
     
-    data = pd.concat([pd.read_excel('./memo/memo.xlsx', sheet_name = sheet) for sheet in sheets], ignore_index = True)
+    data = pd.concat([pd.read_excel('./memo/memo.xlsx', sheet_name = sheet) for sheet in list_memo], ignore_index = True)
 
     data['command'] = data['command'].astype(str)
     data['message'] = data['message'].astype(str)
