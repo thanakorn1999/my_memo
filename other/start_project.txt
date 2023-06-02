@@ -1,16 +1,21 @@
-
--Windows
-
-python -m venv /path/to/new/virtual/environment
-
+- Windows
 env\Scripts\activate.bat
+python tools.py
 
--Mac
+
+- Mac
 source env_code_memo/bin/activate
 sudo python tools.py
+
+
+----------
+# Create Env
+-Windows
+python -m venv ./env
+
+-Mac
 pip3 install virtualenv
 python3 -m venv env_code_memo
 
-source env_code_memo/bin/activate
-
-python tools.py
+sudo pip install virtualenv
+virtualenv env
