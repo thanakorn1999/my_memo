@@ -9,7 +9,6 @@ if platform =='win32':
     import win32api
     win32api.LoadKeyboardLayout('00000409',1) # to switch to english
 import time
-
 def back_space(action):
     global history, cm_del
     if action :
@@ -54,8 +53,10 @@ def chang_command_mac(command_list):
 
 def load_data_excel(platform):
     load_dotenv()
-    list_memo = os.getenv('LIST_MEMO')
-    list_memo = ['react', 'node']
+    list_memo = os.getenv('LIST_MEMO').split(',')
+    print('list_memo',list_memo)
+    print('list_memo',type(list_memo))
+    # list_memo = ['react', 'node']
     
     data = pd.concat([pd.read_excel('./memo/memo.xlsx', sheet_name = sheet) for sheet in list_memo], ignore_index = True)
 
