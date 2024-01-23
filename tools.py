@@ -17,7 +17,7 @@ elif platform =='darwin':
     cm_paste ="command+v"
     cm_del ="delete"
 
-default_history='0123456'
+default_history='012345678910'
 history =default_history
 
 def back_space(action):
@@ -67,7 +67,10 @@ def load_data_excel(platform):
     data = pd.concat([pd.read_excel('./memo/memo.xlsx', sheet_name = sheet) for sheet in list_memo], ignore_index = True)
 
     data['command'] = data['command'].astype(str)
+
     data['message'] = data['message'].astype(str)
+
+    # print(data.to_string())
 
     data = data.dropna()
 
@@ -85,7 +88,7 @@ def load_data_excel(platform):
     if platform == 'darwin':
         command_list = chang_command_mac(command_list)
 
- 
+    print(command_list)
     return command_list, message_json
 
 def check_map_command(history):
