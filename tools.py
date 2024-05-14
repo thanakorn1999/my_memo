@@ -9,6 +9,9 @@ if platform =='win32':
     import win32api
     win32api.LoadKeyboardLayout('00000409',1) # to switch to english
 import time
+import pyautogui as pg
+import random
+import string
 
 if platform =='win32':
     cm_paste ="ctrl+v"
@@ -19,6 +22,40 @@ elif platform =='darwin':
 
 default_history='012345678910'
 history =default_history
+# ? AUTO-FILL
+
+def generate_random_data():
+    random_number = random.randint(1, 100)
+    # random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
+    letters = string.ascii_lowercase.replace('e', 'a').replace('E', 'A')  # Remove 'e' and 'E'
+    random_string=  ''.join(random.choice(letters) for _ in range(10))
+    return random_number, random_string
+
+def auto_fill():
+    pg.click(pg.position())
+    pg.keyDown('up')
+    pg.keyDown('enter')
+    random_number, random_string = generate_random_data()
+    text = str(random_number)+random_string
+    print(text)
+    # pg.write(text, interval=0.001) 
+    pg.write(text) 
+    pg.keyDown('enter')
+    pg.keyDown('esc')
+def auto_fill_next_fiel():
+    # pg.click(pg.position())
+    pg.keyDown('tab')
+    pg.keyDown('up')
+    pg.keyDown('up')
+    pg.keyDown('enter')
+    random_number, random_string = generate_random_data()
+    text = str(random_number)+random_string
+    print(text)
+    # pg.write(text, interval=0.001) 
+    pg.write(text) 
+    pg.keyDown('enter')
+    pg.keyDown('esc')
+
 
 def back_space(action):
     global history, cm_del
@@ -116,6 +153,10 @@ def released(release):
         check_map_command(history)
     elif release=='delete':
         back_space(False)
+    elif release=='f2':
+        auto_fill()
+    elif release=='f4':
+        auto_fill_next_fiel()
     else :
         print(release)
 
