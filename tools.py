@@ -1,7 +1,9 @@
 import os
+import argparse
 from dotenv import load_dotenv
 import pyperclip
 import keyboard
+import pygetwindow as gw
 import pandas as pd
 import re
 from sys import platform
@@ -12,7 +14,13 @@ import time
 import pyautogui as pg
 import random
 import string
+import ctypes
+import threading
+parser = argparse.ArgumentParser(description='Script so useful.')
+parser.add_argument("--t", type=str, default='')
 
+args = parser.parse_args()
+vda = ctypes.CDLL('./VirtualDesktopAccessor.dll')
 if platform =='win32':
     cm_paste ="ctrl+v"
     cm_del ="\b"
@@ -42,6 +50,39 @@ def auto_fill():
     pg.write(text) 
     pg.keyDown('enter')
     pg.keyDown('esc')
+    
+def export_joget():
+    pg.keyDown('tab')
+    pg.keyDown('space')      
+    pg.keyUp('space')  
+    pg.keyDown('tab')
+    pg.keyDown('space')      
+    pg.keyUp('space')  
+    pg.keyDown('tab')
+    pg.keyDown('space')      
+    pg.keyUp('space')  
+    pg.keyDown('tab')
+    pg.keyDown('space')      
+    pg.keyUp('space')  
+    pg.keyDown('tab')
+    pg.keyDown('space')      
+    pg.keyUp('space')   
+    pg.keyDown('tab')
+    pg.keyDown('space')    
+    pg.keyUp('space')  
+    pg.keyDown('tab')
+    pg.keyDown('space')    
+    pg.keyUp('space')  
+    pg.keyDown('tab')
+    pg.keyDown('space')    
+    pg.keyUp('space')  
+    pg.keyDown('tab')
+    pg.keyDown('space')    
+    pg.keyUp('space')  
+    pg.keyDown('tab')
+    pg.keyDown('space')    
+    pg.keyUp('space')         
+
 def auto_fill_next_fiel():
     # pg.click(pg.position())
     pg.keyDown('tab')
@@ -153,19 +194,150 @@ def released(release):
         check_map_command(history)
     elif release=='delete':
         back_space(False)
-    elif release=='f2':
-        auto_fill()
     elif release=='f4':
+        # tab 
+        # space
+        export_joget()
+    elif release=='print screen':
+        auto_fill()
+    elif release=='home':
         auto_fill_next_fiel()
     else :
         print(release)
 
+
+
+# Define constants
+SW_SHOWNORMAL = 1
+SW_SHOWMINIMIZED = 2
+SW_SHOWMAXIMIZED = 3
+
+# Load user32.dll
+user32 = ctypes.windll.user32
+# 
+# 
+# 
+backend_identifier = ""
+frontend_identifier = ""
+test_identifier = ""
+front_test_google_identifier = ""
+front_google_identifier = ""
+
+# 
+# lang = 'OSS' 
+# lang = 'OEE-JAME' 
+lang = args.t
+if lang == "OSS":
+    backend_identifier = "efund-backend - Visual Studio Code"
+    frontend_identifier = "efund-frontend - Visual Studio Code"
+    test_identifier = "oss-test-cyp - Visual Studio Code"
+    front_test_google_identifier = "oss-test-cyp - Google Chrome"
+    front_google_identifier = "e-Fund | ERC - Google Chrome"
+    front_error = "An error occurred |"
+elif lang == "RPGG":
+    # backend_identifier = "ui - Visual Studio Code"
+    backend_identifier = "react-game-backend - Visual Studio Code"
+    frontend_identifier = "rgame-front - Visual Studio Code"
+    test_identifier = ""
+    front_google_identifier = "Vite + React + TS"
+    # 
+    front_test_google_identifier = "oss-test-cyp - Google Chrome"
+    front_error = "An error occurred |"
+elif lang == "ELI":
+    backend_identifier = "backend - Visual Studio Code"
+    frontend_identifier = "frontend - Visual Studio Code"
+    test_identifier = ""
+    front_google_identifier = "e-Licensing | ERC - Google Chrome"
+    front_test_google_identifier = "oss-test-cyp - Google Chrome"
+    front_error = "An error occurred |"
+
+def switch_to_window(window_identifier):
+    try:
+        windows = gw.getWindowsWithTitle(window_identifier)
+        if windows:
+            window = windows[0]
+            if window.isMinimized:
+                window.restore()  # Restore the window if it's minimized
+                time.sleep(0.2)  # Adding a small delay to ensure the window is restored
+
+            hwnd = window._hWnd
+            desktop_index = vda.GetWindowDesktopNumber(hwnd)
+            current_desktop_index = vda.GetCurrentDesktopNumber()
+
+            if desktop_index != current_desktop_index:
+                vda.GoToDesktopNumber(desktop_index)
+
+            # Bring window to foreground using ctypes
+            user32.ShowWindow(hwnd, SW_SHOWMAXIMIZED)
+            user32.SetForegroundWindow(hwnd)
+            time.sleep(0.2)  # Adding a small delay to ensure the window is activated
+            print(f"Switched to: {window.title}")  # Show actual window title after switch
+        else:
+            print(f"Window not found with identifier: {window_identifier}")
+    except gw.PyGetWindowException as e:
+        if e.args[0].endswith("The operation completed successfully."):
+            print("Window activated successfully despite the error message.")
+        else:
+            print(f"Error: {e}")
+            raise
+def on_activate_f():
+    switch_to_window(frontend_identifier)
+    switch_to_window(frontend_identifier)
+def on_activate_b():
+    switch_to_window(backend_identifier)
+    switch_to_window(backend_identifier)
+def on_activate_t():
+    switch_to_window(test_identifier)
+    switch_to_window(test_identifier)
+def on_activate_ft():
+    switch_to_window(front_test_google_identifier)
+    switch_to_window(front_test_google_identifier)
+
+def on_activate_ff():
+    switch_to_window(front_google_identifier)
+    switch_to_window(front_google_identifier)
+    switch_to_window(front_error)
+    switch_to_window(front_error)
+
+
+# def main():
+#     keyboard.add_hotkey('alt+1', on_activate_f)
+#     keyboard.add_hotkey('alt+2', on_activate_b)
+#     keyboard.add_hotkey('alt+3', on_activate_t)
+#     keyboard.add_hotkey('alt+w+3', on_activate_ft)
+#     keyboard.add_hotkey('alt+w+1', on_activate_ff)
+#     keyboard.on_release(lambda e: released( e.name ))
+#     keyboard.wait()
+
+# command_list ,message_json= load_data_excel(platform)
+
+# def load_and_run():
+#     global command_list, message_json
+#     command_list, message_json = load_data_excel(platform)
+#     main()
+
+# # ใช้ thread เพื่อแยกการโหลดข้อมูลออกจาก main loop ของ keyboard
+# threading.Thread(target=load_and_run, daemon=True).start()
+
+# # main()
 def main():
-    keyboard.on_release(lambda e: released( e.name ))
-    keyboard.wait()
+    keyboard.add_hotkey('alt+1', on_activate_f)
+    keyboard.add_hotkey('alt+2', on_activate_b)
+    keyboard.add_hotkey('alt+3', on_activate_t)
+    keyboard.add_hotkey('alt+w+3', on_activate_ft)
+    keyboard.add_hotkey('alt+w+1', on_activate_ff)
+    keyboard.on_release(lambda e: released(e.name))
+    print("Hotkeys registered, waiting for key events...")
+    keyboard.wait()  # Main loop, stays here
 
+def load_data():
+    global command_list, message_json
+    print("Loading data...")
+    command_list, message_json = load_data_excel(platform)
+    print("Data loaded!")
 
+# โหลดข้อมูลก่อนใน thread แยก เพื่อไม่ให้บล็อค main thread
+threading.Thread(target=load_data, daemon=True).start()
 
-command_list ,message_json= load_data_excel(platform)
-
+# รัน main loop ของ keyboard ใน main thread
 main()
